@@ -1,66 +1,56 @@
 library(tmap)
 
-allData1014 <- allData %>%
-  filter(age == "Y010_014" & country == "ZAF")
+excluded <- c("BWA",
+              "NER",
+              "COG",
+              "CMR",
+              "BDI",
+              "TGO",
+              "ANG",
+              "ESW"
+)
+
 allData1519 <- allData %>%
-  filter(age == "Y015_019")
+  filter(age == "Y015_019") %>%
+  filter(!(country %in% excluded))
 allData2024 <- allData %>%
-  filter(age == "Y020_024")
+  filter(age == "Y020_024") %>%
+  filter(!(country %in% excluded))
 allData2529 <- allData %>%
-  filter(age == "Y025_029")
+  filter(age == "Y025_029") %>%
+  filter(!(country %in% excluded))
 allData1529 <- allData %>%
-  filter(age != "Y010_014")
+  filter(age != "Y010_014") %>%
+  filter(!(country %in% excluded))
 
 
-all.sf2.1519 <- full_join(all.sf, 
+all.sf2.1519.resids <- full_join(all.sf.resids, 
                           allData1519,
                           dplyr::join_by(area == area,
                                          level == level)) %>%
   filter(area != "Nhamatanda")
 
-all.sf2.2024 <- full_join(all.sf, 
+all.sf2.2024.resids <- full_join(all.sf.resids, 
                           allData2024,
                           dplyr::join_by(area == area,
                                          level == level)) %>%
   filter(area != "Nhamatanda")
 
-all.sf2.2529 <- full_join(all.sf, 
+all.sf2.2529.resids <- full_join(all.sf.resids, 
                           allData2529,
                           dplyr::join_by(area == area,
                                          level == level)) %>%
   filter(area != "Nhamatanda")
 
-all.sf2.1529 <- full_join(all.sf, 
+all.sf2.1529.resids <- full_join(all.sf.resids, 
                           allData1529,
                           dplyr::join_by(area == area,
                                          level == level)) %>%
   filter(area != "Nhamatanda")
 
 
-all.sf2.1519.resids <- all.sf2.1519 %>%
-  filter(country != "BWA") %>%
-  filter(country != "ESW")
-
-allData1519.resids <- allData1519 %>%
-  filter(country != "BWA") %>%
-  filter(country != "ESW")
-
-all.sf2.2024.resids <- all.sf2.2024 %>%
-  filter(country != "BWA") %>%
-  filter(country != "ESW")
-allData2024.resids <- allData2024 %>%
-  filter(country != "BWA") %>%
-  filter(country != "ESW")
-
-all.sf2.2529.resids <- all.sf2.2529 %>%
-  filter(country != "BWA") %>%
-  filter(country != "ESW")
-allData2529.resids <- allData2529 %>%
-  filter(country != "BWA") %>%
-  filter(country != "ESW")
-
 #15 to 19s
-model1519 <- lm(inc ~ prev + maleART + malePrev + sexualDebut25_49, data = allData1519.resids)
+model1519 <- lm(inc ~ prev + maleART + malePrev + sexualDebut25_49, data = allData1519)
 summary(model1519)
 
 plot(density(resid(model1519)))
@@ -74,7 +64,7 @@ map.resids <- cbind(all.sf2.1519.resids, resids1519)
 
 
 #20 to 24s
-model2024 <- lm(inc ~ prev + maleART + malePrev + sexualDebut25_49, data = allData2024.resids)
+model2024 <- lm(inc ~ prev + maleART + malePrev + sexualDebut25_49, data = allData2024)
 summary(model2024)
 
 plot(density(resid(model2024)))
@@ -109,8 +99,10 @@ qqnorm(resid(model1529)) # A quantile normal plot - good for checking normality
 qqline(resid(model1529))
 
 resids1529 <- residuals(model1529) %>% as.data.frame()
-nums <- rep(1:1092, each = 3)
+nums <- rep(1:1045, each = 3)
+
 resids1529.2 <- cbind(resids1529, nums) 
+
 resids1529.3 <- resids1529.2 %>%
   group_by(nums) %>%
   summarize(resids1529mean = mean(.)) %>%
