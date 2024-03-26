@@ -381,6 +381,7 @@ zaf2.sf.2529 <- full_join(zaf2.sf,
 #10 to 14s
 modelSAf1014 <- lm(inc ~ prev + maleART + malePrev + sexualDebut25_49 + sexRatio15_64, data = allDataZAF1014)
 summary(modelSAf1014)
+confint(modelSAf1014)
 
 plot(density(resid(modelSAf1014)))
 qqnorm(resid(modelSAf1014)) # A quantile normal plot - good for checking normality
@@ -394,6 +395,7 @@ map.resids <- cbind(zaf2.sf.1014, residsSAf1014)
 #15 to 19s
 modelSAf1519 <- lm(inc ~ prev + maleART + malePrev + sexualDebut25_49 + sexRatio15_64, data = allDataZAF1519)
 summary(modelSAf1519)
+confint(modelSAf1519)
 
 plot(density(resid(modelSAf1519)))
 qqnorm(resid(modelSAf1519)) # A quantile normal plot - good for checking normality
@@ -407,6 +409,7 @@ map.resids <- cbind(map.resids, residsSAf1519)
 #20 to 24s
 modelSAf2024 <- lm(inc ~ prev + maleART + malePrev + sexualDebut25_49 + sexRatio15_64, data = allDataZAF2024)
 summary(modelSAf2024)
+confint(modelSAf2024)
 
 plot(density(resid(modelSAf2024)))
 qqnorm(resid(modelSAf2024)) # A quantile normal plot - good for checking normality
@@ -420,6 +423,7 @@ map.resids <- cbind(map.resids, residsSAf2024)
 #25 to 29s
 modelSAf2529 <- lm(inc ~ prev + maleART + malePrev + sexualDebut25_49 + sexRatio15_64, data = allDataZAF2529)
 summary(modelSAf2529)
+confint(modelSAf2529)
 
 plot(density(resid(modelSAf2529)))
 qqnorm(resid(modelSAf2529)) # A quantile normal plot - good for checking normality
@@ -527,6 +531,7 @@ residuals_SAf_2024 <- ggplot() +
 residuals_SAf_2024
 
 ggsave("output/residuals_SAf_2024.png", dpi = 300, width = 5, height = 5)
+
 
 map.resids.valid.SAf$disp_resids <- cut(map.resids.valid.SAf$residsSAf2529,
                                         breaks = br,

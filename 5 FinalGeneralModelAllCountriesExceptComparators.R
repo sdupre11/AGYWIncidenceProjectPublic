@@ -27,16 +27,19 @@ allData1529 <- allData %>%
 
 model.1529 <- lm(inc ~ as.factor(age) + prev + maleART + malePrev + sexualDebut25_49, data = allData1529)
 summary(model.1529)
+confint(model.1529)
 
 model.1519 <- lm(inc ~ prev + maleART + malePrev + sexualDebut25_49, data = allData1519)
 summary(model.1519)
+confint(model.1519)
 
 model.2024 <- lm(inc ~ prev + maleART + malePrev + sexualDebut25_49, data = allData2024)
 summary(model.2024)
+confint(model.2024)
 
 model.2529 <- lm(inc ~ prev + maleART + malePrev + sexualDebut25_49, data = allData2529)
 summary(model.2529)
-
+confint(model.2529)
 
 
 

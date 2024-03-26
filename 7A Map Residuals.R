@@ -1,5 +1,8 @@
 library(tmap)
 
+hti0.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/hti.geojson") %>%
+  filter(area_level == 0)
+
 excluded <- c("BWA",
               "NER",
               "COG",
@@ -218,10 +221,12 @@ residuals_main_1519 <- base_gg_main +
                     drop = FALSE,
                     na.value = NA,
                     label = labs_plot,
-                    # Legend
-                    guide = guide_legend(direction = "vertical",
-                                         nrow = 1,
-                                         label.position = "bottom")) +
+                    guide = NULL
+                    # # Legend
+                    # guide = guide_legend(direction = "vertical",
+                    #                      nrow = 1,
+                    #                      label.position = "bottom")
+                    ) +
   # Theme
   theme_void()
 
@@ -244,9 +249,7 @@ residuals_main_2024 <- base_gg_main +
                     na.value = NA,
                     label = labs_plot,
                     # Legend
-                    guide = guide_legend(direction = "vertical",
-                                         nrow = 1,
-                                         label.position = "bottom")) +
+                    guide = NULL) +
   # Theme
   theme_void()
 
@@ -271,9 +274,7 @@ residuals_main_2529 <- base_gg_main +
                     na.value = NA,
                     label = labs_plot,
                     # Legend
-                    guide = guide_legend(direction = "vertical",
-                                         nrow = 1,
-                                         label.position = "bottom")) +
+                    guide = NULL) +
   # Theme
   theme_void()
 
