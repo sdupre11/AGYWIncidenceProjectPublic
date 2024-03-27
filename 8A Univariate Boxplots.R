@@ -1,4 +1,4 @@
-#This script assumes that the data processes in Univariate Maps.R have been run already.
+#This script assumes that the data processes in 8B Univariate Maps.R have been run already.
 
 library(ggbeeswarm)
 
@@ -388,32 +388,6 @@ ggplot() +
 
 
 ggsave("output/sexratio_boxplot.png", dpi = 300, width = 6, height = 6)
-
-
-
-
-
-#############################
-base_gg_main <- geom_sf(data = st_as_sf(Africa.sf), 
-        fill = NA, 
-        color = "black", 
-        linewidth = 0.5)
-
-
-ggplot(data = sf.noHTI2024, 
-                   aes(fill = cut(sexRatio15_64,
-                                  breaks = c(0,0.8,0.9,0.95,1.05,1.1,1.2,100),
-                                  dig.lab = 5))) +
-  geom_sf(color = "#7f7f7f",
-          linewidth = 0.1) +
-  scale_fill_brewer(type = "qual",
-                    palette = "RdYlBu",
-                    na.value = NA,
-                    name = "ART",
-                    direction=1
-  ) +
-  theme_void() +
-  base_gg_main
 
 
 

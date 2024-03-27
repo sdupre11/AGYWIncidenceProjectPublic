@@ -40,9 +40,11 @@ bwa.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/bwa.geojson") %>%
   filter(area_level == 3)
 civ.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/civ.geojson") %>%
   filter(area_level == 2)
-hti.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/hti.geojson") %>%
-  filter(area_level == 2)
 cog.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/cog.geojson") %>%
+  filter(area_level == 2)
+esw.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/esw.geojson") %>%
+  filter(area_level == 1)
+hti.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/hti.geojson") %>%
   filter(area_level == 2)
 ken.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/ken.geojson") %>%
   filter(area_level == 2)
@@ -90,6 +92,7 @@ my_list.full <- list(Angola.sf,
                      bwa.sf,
                      civ.sf,
                      cog.sf,
+                     esw.sf,
                      hti.sf,
                      ken.sf,
                      lso.sf,

@@ -23,18 +23,18 @@ Angola.sf$center_x <- NA
 Angola.sf$center_y <- NA
 Angola.sf$name <- NA
 
-duplicates <- c(1517,
-                1589,
-                1553,
-                1625,
-                1502,
-                1538,
-                1574,
-                1610,
-                1510,
-                1546,
-                1582,
-                1618)
+duplicates <- c(2718,
+                2726,
+                2733,
+                2754,
+                2762,
+                2769,
+                2790,
+                2798,
+                2805,
+                2826,
+                2834,
+                2841)
 
 
 allData <- read.csv("data/CountryModelsData.csv") %>%
@@ -44,6 +44,10 @@ bwa.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/bwa.geojson") %>%
   filter(area_level == 3)
 civ.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/civ.geojson") %>%
   filter(area_level == 2)
+cog.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/cog.geojson") %>%
+  filter(area_level == 2)
+esw.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/esw.geojson") %>%
+  filter(area_level == 1)
 hti.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/hti.geojson") %>%
   filter(area_level == 2)
 ken.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/ken.geojson") %>%
@@ -73,25 +77,27 @@ zmb.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/zmb.geojson") %>%
 zwe.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/zwe.geojson") %>%
   filter(area_level == 2)
 
-my_list <- list(Angola.sf,
-                bwa.sf,
-                civ.sf,
-                hti.sf,
-                ken.sf,
-                lso.sf,
-                moz.sf,
-                mwi.sf,
-                nam.sf,
-                ner.sf,
-                rwa.sf,
-                tgo.sf,
-                tza.sf,
-                uga.sf,
-                zaf.sf,
-                zmb.sf,
-                zwe.sf)
+my_list.full <- list(Angola.sf,
+                     bwa.sf,
+                     civ.sf,
+                     cog.sf,
+                     esw.sf,
+                     hti.sf,
+                     ken.sf,
+                     lso.sf,
+                     moz.sf,
+                     mwi.sf,
+                     nam.sf,
+                     ner.sf,
+                     rwa.sf,
+                     tgo.sf,
+                     tza.sf,
+                     uga.sf,
+                     zaf.sf,
+                     zmb.sf,
+                     zwe.sf)
 
-all.sf <- do.call(rbind, my_list)
+all.sf <- do.call(rbind, my_list.full)
 
 all.sf <- all.sf %>%
   select(-c(area_level_label,
@@ -470,114 +476,171 @@ sf.noHTI2529 <- all.sf2.2529 %>%
 sf.HTI2529 <- all.sf2.2529 %>%
   filter(country == "HTI")
 
-
-
-HTIorNotHTI <- function(z) {
-  if(z == "Haiti") {
-    geom_sf(data = st_as_sf(hti0.sf), 
-                            fill = NA, 
-                            color = "black", 
-                            linewidth = 0.5)
-  } else {
-    geom_sf(data = st_as_sf(Africa.sf), 
-                            fill = NA, 
-                            color = "black", 
-                            linewidth = 0.5)
+annoyingPaletteJustWorkInc <- function(x, y) {
+  
+  if (y == "Africa") {
+    location <- Africa.sf
+  } else if (y == "Haiti") {
+    location <- hti0.sf
   }
+  
+  G1 <- x %>%
+    filter(inc < 0.5)
+  G2 <- x %>%
+    filter(inc > 0.5 & inc < 1)
+  G3 <- x %>%
+    filter(inc > 1 &  inc < 2)
+  G4 <- x %>%
+    filter(inc > 2 & inc < 5)
+  G5 <- x %>%
+    filter(inc > 5 & inc < 10)
+  G6 <- x %>%
+    filter(inc > 10 & inc < 15)
+  G7 <- x %>%
+    filter(inc > 15)
+  
+  map <- ggplot() +
+    geom_sf(data = G1,
+            fill = "#FEE5D9",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G2,
+            fill = "#FABAA1",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G3,
+            fill = "#F69274",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G4,
+            fill = "#F26A4D",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G5,
+            fill = "#EF3D2C",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G6,
+            fill = "#CA2027",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G7,
+            fill = "#9A1B1F",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    theme_void() +
+    geom_sf(data = st_as_sf(location), 
+            fill = NA, 
+            color = "black", 
+            linewidth = 0.5) +
+    theme(legend.position = "none")
+  
+  return(map)
 }
 
-# HTIorNotHTI_NAs <- function(z) {
+# 
+# HTIorNotHTI <- function(z) {
 #   if(z == "Haiti") {
 #     geom_sf(data = st_as_sf(hti0.sf), 
-#             fill = NA, 
-#             color = "black", 
-#             linewidth = 0.5)
+#                             fill = NA, 
+#                             color = "black", 
+#                             linewidth = 0.2)
 #   } else {
 #     geom_sf(data = st_as_sf(Africa.sf), 
-#             fill = "#928E85", 
-#             color = NA, 
-#             linewidth = 0.5)
+#                             fill = NA, 
+#                             color = "black", 
+#                             linewidth = 0.2)
 #   }
 # }
-
-univariates <- function(w, x, y, z="Other") {
-  
-  base_gg_main <- HTIorNotHTI(z)
-  
-  # base_gg_main_NAs <- HTIorNotHTI_NAs(z)
-
-  if(x == "inc") {
-    basePlot <- ggplot(data = w, 
-                       aes(fill = cut(inc,
-                                      breaks = c(0,0.5, 1,2,5,10,15,100),
-                                      dig.lab = 5)))
-  } else if (x =="prev") {
-    basePlot <- ggplot(data = w, 
-                       aes(fill = cut(prev,
-                                      breaks = c(0,2,4,6,8,10,20,100),
-                                      dig.lab = 5)))
-  } else if (x =="maleART") {
-    basePlot <- ggplot(data = w, 
-                       aes(fill = cut(maleART,
-                                      breaks = c(0,40,50,60,70,80,90,100),
-                                      dig.lab = 5)))
-  } else if (x =="malePrev") {
-    basePlot <- ggplot(data = w, 
-                       aes(fill = cut(malePrev,
-                                      breaks = c(0,5,10,15,20,25,30,100),
-                                      dig.lab = 5)))
-  } else if (x =="sexualDebut25_49") {
-    basePlot <- ggplot(data = w, 
-                       aes(fill = cut(sexualDebut25_49,
-                                      breaks = c(0,15,16,17,18,19,20,100),
-                                      dig.lab = 5)))
-  } else if (x =="sexRatio15_64") {
-    basePlot <- ggplot(data = w, 
-                       aes(fill = cut(sexRatio15_64,
-                                      breaks = c(0,0.8,0.9,0.95,1.05,1.1,1.2,100),
-                                      dig.lab = 5)))
-  }
-  
-  basePlot +
-  # base_gg_main_NAs +
-  geom_sf(color = "#7f7f7f",
-          linewidth = 0.1) +
-  scale_fill_brewer(type = "qual",
-                    palette = y,
-                    na.value = NA,
-                    name = "Incidence",
-                    direction=1,
-                    guides(none)
-                    ) +
-  theme_void() +
-  base_gg_main +
-  theme(legend.position = "none")
-
-}
+# 
+# # HTIorNotHTI_NAs <- function(z) {
+# #   if(z == "Haiti") {
+# #     geom_sf(data = st_as_sf(hti0.sf), 
+# #             fill = NA, 
+# #             color = "black", 
+# #             linewidth = 0.5)
+# #   } else {
+# #     geom_sf(data = st_as_sf(Africa.sf), 
+# #             fill = "#928E85", 
+# #             color = NA, 
+# #             linewidth = 0.5)
+# #   }
+# # }
+# 
+# univariates <- function(w, x, y, z="Other") {
+#   
+#   base_gg_main <- HTIorNotHTI(z)
+#   
+#   # base_gg_main_NAs <- HTIorNotHTI_NAs(z)
+# 
+#   if(x == "inc") {
+#     basePlot <- ggplot(data = w, 
+#                        aes(fill = cut(inc,
+#                                       breaks = c(0,0.5, 1,2,5,10,15,100),
+#                                       dig.lab = 5)))
+#   } else if (x =="prev") {
+#     basePlot <- ggplot(data = w, 
+#                        aes(fill = cut(prev,
+#                                       breaks = c(0,2,4,6,8,10,20,100),
+#                                       dig.lab = 5)))
+#   } else if (x =="maleART") {
+#     basePlot <- ggplot(data = w, 
+#                        aes(fill = cut(maleART,
+#                                       breaks = c(0,40,50,60,70,80,90,100),
+#                                       dig.lab = 5)))
+#   } else if (x =="malePrev") {
+#     basePlot <- ggplot(data = w, 
+#                        aes(fill = cut(malePrev,
+#                                       breaks = c(0,5,10,15,20,25,30,100),
+#                                       dig.lab = 5)))
+#   } else if (x =="sexualDebut25_49") {
+#     basePlot <- ggplot(data = w, 
+#                        aes(fill = cut(sexualDebut25_49,
+#                                       breaks = c(0,15,16,17,18,19,20,100),
+#                                       dig.lab = 5)))
+#   } else if (x =="sexRatio15_64") {
+#     basePlot <- ggplot(data = w, 
+#                        aes(fill = cut(sexRatio15_64,
+#                                       breaks = c(0,0.8,0.9,0.95,1.05,1.1,1.2,100),
+#                                       dig.lab = 5)))
+#   }
+#   
+#   basePlot +
+#   geom_sf(color = "#7f7f7f",
+#   linewidth = 0.1) +
+#   scale_fill_brewer(type = "qual",
+#                     palette = y,
+#                     na.value = NA,
+#                     name = "Incidence",
+#                     direction=1,
+#                     guides(none)
+#                     ) +
+#   theme_void() +
+#   base_gg_main +
+#   theme(legend.position = "none")
+# 
+# }
 
 #INCIDENCE
 ###NON-HAITIAN
-incidence_main_1519 <-univariates(sf.noHTI1519,
-                                  "inc",
-                                  "Reds")
+incidence_main_1519 <-annoyingPaletteJustWorkInc(sf.noHTI1519,
+                                  "Africa")
             
 
 incidence_main_1519
 
 ggsave("output/incidence_main_1519.png", dpi = 300, width = 12, height = 12)
 
-incidence_main_2024 <-univariates(sf.noHTI2024,
-                                  "inc",
-                                  "Reds")
+incidence_main_2024 <-annoyingPaletteJustWorkInc(sf.noHTI2024,
+                                  "Africa")
 
 
 incidence_main_2024
 
 ggsave("output/incidence_main_2024.png", dpi = 300, width = 12, height = 12)
 
-incidence_main_2529 <-univariates(sf.noHTI2529,
-                                  "inc",
-                                  "Reds")
+incidence_main_2529 <-annoyingPaletteJustWorkInc(sf.noHTI2529,
+                                  "Africa")
 
 
 incidence_main_2529
@@ -585,58 +648,113 @@ incidence_main_2529
 ggsave("output/incidence_main_2529.png", dpi = 300, width = 12, height = 12)
 
 ###HAITI
-incidence_HTI_1519 <-univariates(sf.HTI1519,
-                                  "inc",
-                                  "Reds",
-                                 "Haiti")
+incidence_HTI_1519 <- annoyingPaletteJustWorkInc(sf.HTI1519,
+                                                 "Haiti")
 
 incidence_HTI_1519
+
 
 ggsave("output/incidence_HTI_1519.png", dpi = 300, width = 4, height = 4)
 
 
-incidence_HTI_2024 <-univariates(sf.HTI2024,
-                                 "inc",
-                                 "Reds",
-                                 "Haiti")
+incidence_HTI_2024 <-annoyingPaletteJustWorkInc(sf.HTI2024,
+                                                "Haiti")
 
 incidence_HTI_2024
 
 ggsave("output/incidence_HTI_2024.png", dpi = 300, width = 4, height = 4)
 
 
-incidence_HTI_2529 <-univariates(sf.HTI2529,
-                                 "inc",
-                                 "Reds",
-                                 "Haiti")
+incidence_HTI_2529 <-annoyingPaletteJustWorkInc(sf.HTI2529,
+                                                "Haiti")
 
 incidence_HTI_2529
 
 ggsave("output/incidence_HTI_2529.png", dpi = 300, width = 4, height = 4)
 
-PREVALENCE
+#PREVALENCE
+
+annoyingPaletteJustWorkPrev <- function(x, y) {
+  
+  if (y == "Africa") {
+    location <- Africa.sf
+  } else if (y == "Haiti") {
+    location <- hti0.sf
+  }
+  
+  G1 <- x %>%
+    filter(prev < 2)
+  G2 <- x %>%
+    filter(prev > 2 & prev < 4)
+  G3 <- x %>%
+    filter(prev > 4 &  prev < 6)
+  G4 <- x %>%
+    filter(prev > 6 & prev < 8)
+  G5 <- x %>%
+    filter(prev > 8 & prev < 10)
+  G6 <- x %>%
+    filter(prev > 10 & prev < 20)
+  G7 <- x %>%
+    filter(prev > 20)
+  
+  map <- ggplot() +
+    geom_sf(data = G1,
+            fill = "#F0F3FA",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G2,
+            fill = "#C7DBEE",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G3,
+            fill = "#9ECAE1",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G4,
+            fill = "#6AADD6",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G5,
+            fill = "#4392C6",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G6,
+            fill = "#2372B5",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G7,
+            fill = "#194791",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    theme_void() +
+    geom_sf(data = st_as_sf(location), 
+            fill = NA, 
+            color = "black", 
+            linewidth = 0.5) +
+    theme(legend.position = "none")
+  
+  return(map)
+}
+
 ###NON-HAITIAN
-prevalence_main_1519 <-univariates(sf.noHTI1519,
-                                  "prev",
-                                  "Blues")
+prevalence_main_1519 <-annoyingPaletteJustWorkPrev(sf.noHTI1519,
+                                  "Africa")
 
 
 prevalence_main_1519
 
 ggsave("output/prevalence_main_1519.png", dpi = 300, width = 12, height = 12)
 
-prevalence_main_2024 <-univariates(sf.noHTI2024,
-                                  "prev",
-                                  "Blues")
+prevalence_main_2024 <-annoyingPaletteJustWorkPrev(sf.noHTI2024,
+                                  "Africa")
 
 
 prevalence_main_2024
 
 ggsave("output/prevalence_main_2024.png", dpi = 300, width = 12, height = 12)
 
-prevalence_main_2529 <-univariates(sf.noHTI2529,
-                                  "prev",
-                                  "Blues")
+prevalence_main_2529 <-annoyingPaletteJustWorkPrev(sf.noHTI2529,
+                                  "Africa")
 
 
 prevalence_main_2529
@@ -644,30 +762,24 @@ prevalence_main_2529
 ggsave("output/prevalence_main_2529.png", dpi = 300, width = 12, height = 12)
 
 ###HAITI
-prevalence_HTI_1519 <-univariates(sf.HTI1519,
-                                 "prev",
-                                 "Blues",
-                                 "Haiti")
+prevalence_HTI_1519 <-annoyingPaletteJustWorkPrev(sf.HTI1519,
+                                                  "Haiti")
 
 prevalence_HTI_1519
 
 ggsave("output/prevalence_HTI_1519.png", dpi = 300, width = 4, height = 4)
 
 
-prevalence_HTI_2024 <-univariates(sf.HTI1519,
-                                 "prev",
-                                 "Blues",
-                                 "Haiti")
+prevalence_HTI_2024 <-annoyingPaletteJustWorkPrev(sf.HTI1519,
+                                                  "Haiti")
 
 prevalence_HTI_2024
 
 ggsave("output/prevalence_HTI_2024.png", dpi = 300, width = 4, height = 4)
 
 
-prevalence_HTI_2529 <-univariates(sf.HTI2529,
-                                 "prev",
-                                 "Blues",
-                                 "Haiti")
+prevalence_HTI_2529 <-annoyingPaletteJustWorkPrev(sf.HTI2529,
+                                                  "Haiti")
 
 prevalence_HTI_2529
 
@@ -675,10 +787,72 @@ ggsave("output/prevalence_HTI_2529.png", dpi = 300, width = 4, height = 4)
 
 
 #MALE ART
+annoyingPaletteJustWorkMaleART <- function(x, y) {
+  
+  if (y == "Africa") {
+    location <- Africa.sf
+  } else if (y == "Haiti") {
+    location <- hti0.sf
+  }
+
+  G1 <- x %>%
+    filter(maleART < 40)
+  G2 <- x %>%
+    filter(maleART > 40 & maleART < 50)
+  G3 <- x %>%
+    filter(maleART > 50 &  maleART < 60)
+  G4 <- x %>%
+    filter(maleART > 60 & maleART < 70)
+  G5 <- x %>%
+    filter(maleART > 70 & maleART < 80)
+  G6 <- x %>%
+    filter(maleART > 80 & maleART < 90)
+  G7 <- x %>%
+    filter(maleART > 90)
+  
+  map <- ggplot() +
+    geom_sf(data = G1,
+            fill = "#EEF6E9",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G2,
+            fill = "#C8E4BF",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G3,
+            fill = "#A2D39A",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G4,
+            fill = "#76C375",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G5,
+            fill = "#41AB5D",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G6,
+            fill = "#258B45",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G7,
+            fill = "#005A32",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    theme_void() +
+    geom_sf(data = st_as_sf(location), 
+            fill = NA, 
+            color = "black", 
+            linewidth = 0.5) +
+    theme(legend.position = "none")
+  
+  return(map)
+}
+
+
 ###NON-HAITIAN
-maleART_main <-univariates(sf.noHTI1519,
-                                   "maleART",
-                                   "Greens")
+maleART_main <-annoyingPaletteJustWorkMaleART(sf.noHTI1519,
+                                   "Africa")
 
 
 maleART_main
@@ -687,9 +861,7 @@ ggsave("output/maleART_main.png", dpi = 300, width = 12, height = 12)
 
 
 ###HAITI
-maleART_HTI <-univariates(sf.HTI1519,
-                                  "maleART",
-                                  "Greens",
+maleART_HTI <-annoyingPaletteJustWorkMaleART(sf.HTI1519,
                                   "Haiti")
 
 maleART_HTI
@@ -698,10 +870,69 @@ ggsave("output/maleART_HTI.png", dpi = 300, width = 4, height = 4)
 
 
 #MALE PREVALENCE
+annoyingPaletteJustWorkMalePrev <- function(x, y) {
+  if (y == "Africa") {
+    location <- Africa.sf
+  } else if (y == "Haiti") {
+    location <- hti0.sf
+  }
+
+  G1 <- x %>%
+    filter(malePrev < 5)
+  G2 <- x %>%
+    filter(malePrev > 5 & malePrev < 10)
+  G3 <- x %>%
+    filter(malePrev > 10 & malePrev < 15)
+  G4 <- x %>%
+    filter(malePrev > 15 & malePrev < 20)
+  G5 <- x %>%
+    filter(malePrev > 20 & malePrev < 25)
+  G6 <- x %>%
+    filter(malePrev > 25 & malePrev < 30)
+  G7 <- x %>%
+    filter(malePrev > 30)
+  
+  map <- ggplot() +
+    geom_sf(data = G1,
+            fill = "#F0F3FA",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G2,
+            fill = "#C7DBEE",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G3,
+            fill = "#9ECAE1",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G4,
+            fill = "#6AADD6",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G5,
+            fill = "#4392C6",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G6,
+            fill = "#2372B5",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G7,
+            fill = "#194791",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    theme_void() +
+    geom_sf(data = st_as_sf(location), 
+            fill = NA, 
+            color = "black", 
+            linewidth = 0.5) +
+    theme(legend.position = "none")
+  
+  return(map)
+}
 ###NON-HAITIAN
-malePrev_main <-univariates(sf.noHTI1519,
-                           "malePrev",
-                           "Blues")
+malePrev_main <-annoyingPaletteJustWorkMalePrev(sf.noHTI1519,
+                           "Africa")
 
 
 malePrev_main
@@ -710,9 +941,7 @@ ggsave("output/malePrevalence_main.png", dpi = 300, width = 12, height = 12)
 
 
 ###HAITI
-malePrev_HTI <-univariates(sf.HTI1519,
-                          "malePrev",
-                          "Blues",
+malePrev_HTI <-annoyingPaletteJustWorkMalePrev(sf.HTI1519,
                           "Haiti")
 
 malePrev_HTI
@@ -720,15 +949,75 @@ malePrev_HTI
 ggsave("output/malePrevalence_HTI.png", dpi = 300, width = 4, height = 4)
 
 #AGE OF SEXUAL DEBUT
+annoyingPaletteJustWorksexualDebut <- function(x, y) {
+  if (y == "Africa") {
+    location <- Africa.sf
+  } else if (y == "Haiti") {
+    location <- hti0.sf
+  }
+  
+  G1 <- x %>%
+    filter(sexualDebut25_49 < 15)
+  G2 <- x %>%
+    filter(sexualDebut25_49 >= 15 & sexualDebut25_49 < 16)
+  G3 <- x %>%
+    filter(sexualDebut25_49 >= 16 & sexualDebut25_49 < 17)
+  G4 <- x %>%
+    filter(sexualDebut25_49 >= 17 & sexualDebut25_49 < 18)
+  G5 <- x %>%
+    filter(sexualDebut25_49 >= 18 & sexualDebut25_49 < 19)
+  G6 <- x %>%
+    filter(sexualDebut25_49 >= 19 & sexualDebut25_49 < 20)
+  G7 <- x %>%
+    filter(sexualDebut25_49 >= 20)
+  
+  map <- ggplot() +
+    geom_sf(data = G1,
+            fill = "#FFEDDF",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G2,
+            fill = "#FED1A2",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G3,
+            fill = "#FAAD6C",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G4,
+            fill = "#F68C40",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G5,
+            fill = "#F06A22",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G6,
+            fill = "#D84C27",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G7,
+            fill = "#8B301D",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    theme_void() +
+    geom_sf(data = st_as_sf(location), 
+            fill = NA, 
+            color = "black", 
+            linewidth = 0.5) +
+    theme(legend.position = "none")
+  
+  return(map)
+}
 ###NON-HAITIAN
 
 
-sf.noHTI1519_noBWA <- sf.noHTI1519 %>%
-  filter(country != "BWA")
+sf.noHTI1519_noBWAorESW <- sf.noHTI1519 %>%
+  filter(country != "BWA") %>%
+  filter(country != "ESW")
 
-sexualDebut_main <-univariates(sf.noHTI1519_noBWA,
-                                   "sexualDebut25_49",
-                                   "Oranges")
+sexualDebut_main <-annoyingPaletteJustWorksexualDebut(sf.noHTI1519_noBWAorESW,
+                                   "Africa")
 
 sexualDebut_main
 
@@ -736,9 +1025,7 @@ ggsave("output/sexualDebut_main.png", dpi = 300, width = 12, height = 12)
 
 
 ###HAITI
-sexualDebut_HTI <-univariates(sf.HTI1519,
-                                  "sexualDebut25_49",
-                                  "Oranges",
+sexualDebut_HTI <-annoyingPaletteJustWorksexualDebut(sf.HTI1519,
                                   "Haiti")
 
 sexualDebut_HTI
@@ -748,10 +1035,69 @@ ggsave("output/sexualDebut_HTI.png", dpi = 300, width = 4, height = 4)
 
 
 #SEX RATIO
+annoyingPaletteJustWorksSexRatio <- function(x, y) {
+  if (y == "Africa") {
+    location <- Africa.sf
+  } else if (y == "Haiti") {
+    location <- hti0.sf
+  }
+  
+  G1 <- x %>%
+    filter(sexRatio15_64 < 0.8)
+  G2 <- x %>%
+    filter(sexRatio15_64 > 0.8 & sexRatio15_64 < 0.9)
+  G3 <- x %>%
+    filter(sexRatio15_64 > 0.9 & sexRatio15_64 < 0.95)
+  G4 <- x %>%
+    filter(sexRatio15_64 > 0.95 & sexRatio15_64 < 1.05)
+  G5 <- x %>%
+    filter(sexRatio15_64 > 1.05 & sexRatio15_64 < 1.1)
+  G6 <- x %>%
+    filter(sexRatio15_64 > 1.1 & sexRatio15_64 < 1.2)
+  G7 <- x %>%
+    filter(sexRatio15_64 > 1.2)
+  
+  map <- ggplot() +
+    geom_sf(data = G1,
+            fill = "#D73127",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G2,
+            fill = "#F68D5B",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G3,
+            fill = "#FDDF90",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G4,
+            fill = "#FDF8C1",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G5,
+            fill = "#E0F3F8",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G6,
+            fill = "#92BFDA",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    geom_sf(data = G7,
+            fill = "#4575B5",
+            color = "#7f7f7f",
+            linewidth = 0.1) +
+    theme_void() +
+    geom_sf(data = st_as_sf(location), 
+            fill = NA, 
+            color = "black", 
+            linewidth = 0.5) +
+    theme(legend.position = "none")
+  
+  return(map)
+}
 ###NON-HAITIAN
-sexRatio_main <-univariates(sf.noHTI1519,
-                            "sexRatio15_64",
-                            "RdYlBu")
+sexRatio_main <-annoyingPaletteJustWorksSexRatio(sf.noHTI1519,
+                            "Africa")
 
 
 sexRatio_main
@@ -760,9 +1106,7 @@ ggsave("output/sexRatio_main.png", dpi = 300, width = 12, height = 12)
 
 
 ###HAITI
-sexRatio_HTI <-univariates(sf.HTI1519,
-                           "sexRatio15_64",
-                           "RdYlBu",
+sexRatio_HTI <-annoyingPaletteJustWorksSexRatio(sf.HTI1519,
                            "Haiti")
 
 sexRatio_HTI
