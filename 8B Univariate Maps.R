@@ -40,10 +40,14 @@ duplicates <- c(2718,
 allData <- read.csv("data/CountryModelsData.csv") %>%
   filter(!(X %in% duplicates & area %in% c("Blantyre", "Zomba", "Lilongwe")))
 
+bdi.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/bdi.geojson") %>%
+  filter(area_level == 2)
 bwa.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/bwa.geojson") %>%
   filter(area_level == 3)
 civ.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/civ.geojson") %>%
   filter(area_level == 2)
+cmr.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/cmr.geojson") %>%
+  filter(area_level == 3)
 cog.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/cog.geojson") %>%
   filter(area_level == 2)
 esw.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/esw.geojson") %>%
@@ -78,8 +82,10 @@ zwe.sf <- sf::st_read(dsn = "data/geo-data/geojson/clean/zwe.geojson") %>%
   filter(area_level == 2)
 
 my_list.full <- list(Angola.sf,
+                     bdi.sf,
                      bwa.sf,
                      civ.sf,
+                     cmr.sf,
                      cog.sf,
                      esw.sf,
                      hti.sf,
@@ -877,20 +883,35 @@ annoyingPaletteJustWorkMalePrev <- function(x, y) {
     location <- hti0.sf
   }
 
+  # G1 <- x %>%
+  #   filter(malePrev < 5)
+  # G2 <- x %>%
+  #   filter(malePrev > 5 & malePrev < 10)
+  # G3 <- x %>%
+  #   filter(malePrev > 10 & malePrev < 15)
+  # G4 <- x %>%
+  #   filter(malePrev > 15 & malePrev < 20)
+  # G5 <- x %>%
+  #   filter(malePrev > 20 & malePrev < 25)
+  # G6 <- x %>%
+  #   filter(malePrev > 25 & malePrev < 30)
+  # G7 <- x %>%
+  #   filter(malePrev > 30)
+  
   G1 <- x %>%
-    filter(malePrev < 5)
+    filter(malePrev < 2)
   G2 <- x %>%
-    filter(malePrev > 5 & malePrev < 10)
+    filter(malePrev > 2 & malePrev < 4)
   G3 <- x %>%
-    filter(malePrev > 10 & malePrev < 15)
+    filter(malePrev > 4 & malePrev < 6)
   G4 <- x %>%
-    filter(malePrev > 15 & malePrev < 20)
+    filter(malePrev > 6 & malePrev < 8)
   G5 <- x %>%
-    filter(malePrev > 20 & malePrev < 25)
+    filter(malePrev > 8 & malePrev < 10)
   G6 <- x %>%
-    filter(malePrev > 25 & malePrev < 30)
+    filter(malePrev > 10 & malePrev < 20)
   G7 <- x %>%
-    filter(malePrev > 30)
+    filter(malePrev > 20)
   
   map <- ggplot() +
     geom_sf(data = G1,
