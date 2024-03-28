@@ -28,8 +28,30 @@ Africa.sf.excluded <- c("AGO",
                        "ZMB",
                        "ZWE")
 
+Africa.sf.excluded.sexualDebut <- c("AGO",
+                        "BDI",
+                        "CIV",
+                        "CMR",
+                        "COG",
+                        "KEN",
+                        "LSO",
+                        "MOZ",
+                        "MWI",
+                        "NAM",
+                        "NER",
+                        "RWA",
+                        "TGO",
+                        "TZA",
+                        "UGA",
+                        "ZAF",
+                        "ZMB",
+                        "ZWE")
+
 Africa.sf.exclude <- Africa.sf %>%
   filter(!(ISO3 %in% Africa.sf.excluded))
+
+Africa.sf.exclude.sexualDebut <- Africa.sf %>%
+  filter(!(ISO3 %in% Africa.sf.excluded.sexualDebut))
 
 duplicates <- c(2718,
                 2726,
@@ -161,8 +183,8 @@ Haiti <- full_join(Haiti,
                    corrMapData2529,
                    dplyr::join_by(area_id == country))
 
-Africa <- Africa %>%
-  filter(ISO3 != "HTI")
+# Africa <- Africa %>%
+#   filter(ISO3 != "HTI")
 
 Haiti <- Haiti %>%
   filter(area_id == "HTI")
@@ -288,8 +310,7 @@ annoyingPaletteJustWorkCorrelation <- function(x, y, z) {
               linewidth = 0.5) +
       theme(legend.position = "none")
     
-  }
-  
+  } 
   return(map)
 }
 
@@ -559,9 +580,12 @@ ggsave("output/corr_malePrev_HTI_2529.png", dpi = 300, width = 4, height = 4)
 
 #AGE OF SEXUAL DEBUT
 ###NON-HAITIAN
-Africa$cor_disp <- Africa$cor_inc_sDebut
+Africa.sD <- Africa %>%
+  filter(ISO3 != "BWA" & ISO3 != "ESW")
 
-sexualDebut_main <- annoyingPaletteJustWorkCorrelation(Africa,
+Africa.sD$cor_disp <- Africa.sD$cor_inc_sDebut
+
+sexualDebut_main <- annoyingPaletteJustWorkCorrelation(Africa.sD,
                                                        "Africa",
                                                        "Africa")
 
@@ -570,9 +594,9 @@ sexualDebut_main
 ggsave("output/corr_sexualDebut_main.png", dpi = 300, width = 12, height = 12)
 
 
-Africa$cor_disp <- Africa$cor_inc_SDebut1519
+Africa.sD$cor_disp <- Africa.sD$cor_inc_SDebut1519
 
-sexualDebut_main1519 <- annoyingPaletteJustWorkCorrelation(Africa,
+sexualDebut_main1519 <- annoyingPaletteJustWorkCorrelation(Africa.sD,
                                                            "Africa",
                                                            "Africa")
 
@@ -580,9 +604,9 @@ sexualDebut_main1519
 
 ggsave("output/corr_sexualDebut_main_1519.png", dpi = 300, width = 12, height = 12)
 
-Africa$cor_disp <- Africa$cor_inc_SDebut2024
+Africa.sD$cor_disp <- Africa.sD$cor_inc_SDebut2024
 
-sexualDebut_main2024 <- annoyingPaletteJustWorkCorrelation(Africa,
+sexualDebut_main2024 <- annoyingPaletteJustWorkCorrelation(Africa.sD,
                                                            "Africa",
                                                            "Africa")
 
@@ -590,9 +614,9 @@ sexualDebut_main2024
 
 ggsave("output/corr_sexualDebut_main_2024.png", dpi = 300, width = 12, height = 12)
 
-Africa$cor_disp <- Africa$cor_inc_SDebut2529
+Africa.sD$cor_disp <- Africa.sD$cor_inc_SDebut2529
 
-sexualDebut_main2529 <- annoyingPaletteJustWorkCorrelation(Africa,
+sexualDebut_main2529 <- annoyingPaletteJustWorkCorrelation(Africa.sD,
                                                            "Africa",
                                                            "Africa")
 
