@@ -1,3 +1,5 @@
+#I've done a bit of tweaking here, so just do a last run-through of the dataframe production steps to make sure the correct countries and covariates are being used for your tests
+
 library(hrbrthemes)
 library(tidyverse)
 
@@ -12,9 +14,10 @@ excluded <- c("BWA",
 )
 
 #Only test countries
-data1529.novel <- allData1529 %>%
+data1529.novel <- allData %>%
   filter(country %in% excluded) %>%
-  filter(!(country %in% c("BWA", "ESW", "NER")))
+  filter(!(country %in% c("BWA", "ESW"))) %>%
+  filter(age != "Y010_014")
 
 #Data by age group, main corpus
 allData1014 <- allData %>%
@@ -47,8 +50,9 @@ summary(model.1014.ZAF)
 # summary(model.1529)
 
 #Including age
-model.1529 <- lm(inc ~ as.factor(age) + prev + maleART + malePrev + sexualDebut25_49, data = allData1529)
+model.1529.incAge <- lm(inc ~ as.factor(age) + prev + maleART + malePrev + sexualDebut25_49, data = allData1529)
 summary(model.1529.incAge)
+
 
 model.1519 <- lm(inc ~ prev + maleART + malePrev + sexualDebut25_49, data = allData1519)
 summary(model.1519)
@@ -161,7 +165,7 @@ data1529.yesBurundi <- allData1529 %>%
   filter(country == "BDI") %>%
   filter(area != "Bugarama ")
 
-data1529.yesBurundi$predictedInc <- predict(model.1529,
+data1529.yesBurundi$predictedInc <- predict(model.1529.incAge,
                                             data1529.yesBurundi)
 
 
@@ -190,10 +194,10 @@ hist(data1529.yesBurundi$incAbsPercDiff)
 
 
 #Testing Cameroon
-data1529.yesCameroon <- allData1529 %>%
+data1529.yesCameroon <- data1529.novel %>%
   filter(country == "CMR")
 
-data1529.yesCameroon$predictedInc <- predict(model.1529,
+data1529.yesCameroon$predictedInc <- predict(model.1529.incAge,
                                              data1529.yesCameroon)
 
 
@@ -222,15 +226,15 @@ hist(data1529.yesCameroon$incAbsPercDiff)
 
 
 #Testing Congo
-data1529.yesCongo <- allData1529 %>%
+data1529.yesCongo <- data1529.novel %>%
   filter(country == "COG")
 
-data1529.yesCongo$predictedInc <- predict(model.1529,
+data1529.yesCongo$predictedInc <- predict(model.1529.incAge,
                                           data1529.yesCongo)
 
 
 plot(data1529.yesCongo$inc, data1529.yesCongo$predictedInc)
-cor.test(data1529.yesCongo$inc, data1529.yesCongo$predictedIn)
+cor.test(data1529.yesCongo$inc, data1529.yesCongo$predictedInc)
 
 data1529.yesCongo$predResids <- data1529.yesCongo$inc - data1529.yesCongo$predictedInc
 mean(data1529.yesCongo$predResids)
@@ -254,7 +258,7 @@ hist(data1529.yesCongo$incAbsPercDiff)
 
 
 #Testing All Novel Countries
-data1529.novel$predictedInc <- predict(model.1529,
+data1529.novel$predictedInc <- predict(model.1529.incAge,
                                        data1529.novel)
 
 
